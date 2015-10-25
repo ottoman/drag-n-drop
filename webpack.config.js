@@ -26,14 +26,20 @@ module.exports = {
         test: /\.scss$/,
         loader: 'style!css!sass'
       },
-      // { test: /\.(woff|woff2)$/, loader: 'url-loader?limit=10000&minetype=application/font-woff' },
-      // { test: /\.ttf$/, loader: 'file-loader' },
-      // { test: /\.eot$/, loader: 'file-loader' },
-      // { test: /\.svg$/, loader: 'file-loader' },
-      { test: /\.less$/, loader: 'style-loader!css-loader!less-loader'},
-      { test: /\.css$/, loader: 'style!css' },
-      { test: /\.md$/, loader: 'html!markdown' },
-      // { test: /\.(jsx|js)$/, loader: 'babel-loader', exclude: /node_modules/ }
+      // css
+      {
+        test: /\.css$/,
+        loader: 'style!css'
+      },
+      // coffee
+      {
+        test: /\.coffee$/,
+        loader: 'coffee-loader'
+      },
+      { test: /\.(coffee\.md|litcoffee)$/,
+        loader: 'coffee-loader?literate'
+      },
+      // Babel
       {
         test: /\.(jsx|js)$/,
         exclude: /(node_modules|bower_components)/,
@@ -42,18 +48,7 @@ module.exports = {
           optional: ['runtime'],
           stage: 1
         }
-        // ?stage=1&optional=runtime'
-      },
-      {
-        // Rewrite the file so that it exports the window global.
-        test: __dirname + '/node_modules/zepto/zepto.min.js',
-        loader: 'exports?window.Zepto'
-      },
-      // {
-      //   // Rewrite the file so that it exports the window global.
-      //   test: __dirname + '/node_modules/react-motion/build/react-motion',
-      //   loader: 'exports?window.ReactMotion'
-      // }
+      }
     ]
   },
   resolve: {
@@ -63,15 +58,8 @@ module.exports = {
       'node_modules'
     ],
     alias: {
-      // 'foo-bar': './foo-bar.js'
+
     }
-  },
-  devServer: {
-    port: 8081
-    // contentBase: "./build",
-    // noInfo: true, //  --no-info option
-    // hot: true,
-    // inline: true
   }
 };
 
