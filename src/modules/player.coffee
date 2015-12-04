@@ -1,8 +1,9 @@
 
+uuid =          require "./uuid.js"
 Randomizer =    require "./randomizer.coffee"
 Palette =       require "./palette.coffee"
 SkinTones =     require "./skinTones.coffee"
-PlayerPaths =   require "../../jsx/player-icon/playerPaths.coffee"
+PlayerPaths =   require "../jsx/svg-player-icon/paths.coffee"
 
 randomizer = new Randomizer()
 
@@ -28,7 +29,7 @@ module.exports = {
       throw Error "Invalid facePart:" + facePart
     return PlayerPaths[facePart].length - 1
 
-  createRandom: (skinToneName) ->
+  createRandom: (number, skinToneName) ->
     if not skinToneName
       skinTone = randomizer.itemInArray(SkinTones.array)
     else
@@ -36,6 +37,8 @@ module.exports = {
 
     palette = Palette.create(skinTone)
     return {
+      id: uuid(),
+      number: number,
       bg:{
         x: toPercent(randomizer.fractionBetween(0, 1))
         y: toPercent(randomizer.fractionBetween(0, 1))
