@@ -1,7 +1,4 @@
 
-// start with:
-// webpack-dev-server --progress --colors -d
-//
 var path = require('path');
 
 module.exports = {
@@ -11,12 +8,9 @@ module.exports = {
   output: {
     // Make sure to use [name] or [id] in output.filename
     // when using multiple entry points
-
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].bundle.js',
-    chunkFilename: '[id].bundle.js',
-    // publicPath: 'src',
-    // publicPath: '/dist/'
+    chunkFilename: '[id].bundle.js'
   },
   module: {
     loaders: [
@@ -47,11 +41,7 @@ module.exports = {
       {
         test: /\.(jsx|js)$/,
         exclude: /(node_modules|bower_components)/,
-        loader: 'babel-loader',
-        query: {
-          optional: ['runtime'],
-          stage: 1
-        }
+        loader: 'babel-loader'
       },
       // static files
       {

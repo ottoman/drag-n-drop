@@ -1,7 +1,6 @@
-'use strict';
-
 import React from 'react';
 import {TransitionSpring} from 'react-motion/lib/Spring';
+
 
 let AnimatePosition = React.createClass({
 
@@ -112,6 +111,5 @@ let AnimatePosition = React.createClass({
   }
 
 });
-
 
 export default AnimatePosition;

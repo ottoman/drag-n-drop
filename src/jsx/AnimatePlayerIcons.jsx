@@ -1,8 +1,7 @@
-'use strict';
-
 import React from 'react';
 import AnimateDraggables from './AnimateDraggables.jsx';
 import PlayerIcon from './PlayerIcon.jsx';
+
 
 let AnimatePlayerIcons = React.createClass({
 

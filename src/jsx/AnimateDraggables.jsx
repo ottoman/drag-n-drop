@@ -1,7 +1,6 @@
-'use strict';
-
 import React from 'react';
 import AnimatePosition from './AnimatePosition.jsx';
+
 
 let AnimateDraggables = React.createClass({
 

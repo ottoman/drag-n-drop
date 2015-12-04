@@ -1,5 +1,3 @@
-'use strict';
-
 import React from 'react';
 import Player from '../modules/player.coffee';
 import Uniform from '../modules/uniform.coffee';
@@ -25,8 +23,6 @@ let Team = (players, coordinates, formation, uniform) => {
 
 
 class App extends React.Component {
-
-  // static settings = settings
 
   constructor(props) {
     super(props);
@@ -94,22 +90,6 @@ class App extends React.Component {
         onNewUniform={this.handleNewUniform.bind(this)}
         onClearPositions={this.handleClearPositions.bind(this)}
       />
-    );
-    return (
-      {/*
-      <ReactCSSTransitionGroup transitionName="fadein" transitionAppear={true} transitionEnter={false} transitionLeave={false}>
-        <div key="wrapper" className="wrapper fadein">
-          
-          <header>
-            <h1>Manage Team</h1>
-          </header>
-          
-          <div className="content">
-
-          </div>
-        </div>
-      </ReactCSSTransitionGroup>
-      */} 
     );
   }
 

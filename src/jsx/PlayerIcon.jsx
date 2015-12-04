@@ -1,7 +1,6 @@
-'use strict';
-
 import React from 'react';
 import SvgPlayerIcon from './svg-player-icon/main.coffee';
+
 
 let PlayerIcon = React.createClass({
 

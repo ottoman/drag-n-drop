@@ -1,5 +1,3 @@
-'use strict';
-
 import React from 'react';
 
 let FormationMarker = React.createClass({
@@ -20,6 +18,7 @@ let FormationMarker = React.createClass({
       />
     );
   }
+
 });
 
 export default FormationMarker;

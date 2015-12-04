@@ -1,21 +1,12 @@
-'use strict';
-
 import React from 'react';
-
-import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup.js';
 import _ from 'lodash';
 import AnimatePlayerIcons from './AnimatePlayerIcons.jsx';
-
 import FormationButtons from './FormationButtons.jsx';
-
 import formationCoordinates from './formationCoordinates.js';
 import SvgUniform from './svg-uniform/main.coffee';
-
 import FormationMarker from './FormationMarker.jsx';
 
 function renderLandscapeAndPortrait(component) {
-  // const passthroughProps = Object.keys(component.propTypes);
-
   return class extends component {
     render() {
       return super.renderLandscape();
@@ -86,12 +77,11 @@ class TeamEditor extends React.Component {
         flexWrap: 'wrap',
         justifyContent: 'center'
       }}>
-        <div className="tile" style={{
+        <div style={{
           position: 'relative',
           width: this.props.settings.window.height,
           height: '100%'
         }}>
-
             <div className="editor">
                 
                 <div className="field" style={{
@@ -124,8 +114,6 @@ class TeamEditor extends React.Component {
                 >Clear</button>
 
             </div>
-
-
 
         </div>
         <div className="tile" style={{
@@ -163,8 +151,6 @@ class TeamEditor extends React.Component {
               </div>
               <button className="glass" onClick={this.handleClickNewUniform.bind(this)}>Random</button>
             </div>
-
-
 
         </div>
       </div>

@@ -1,4 +1,3 @@
-'use strict';
 
 require('./css/styles.css');
 
@@ -33,6 +32,7 @@ const renderApp = () => {
 function handleResize() {
   let settings = getSettings();
   if (settings.window.width && settings.window.height) {
+    // Once we have width and height we can render
     renderApp();
     // Hide the spinner
     document.getElementById('loader').className = 'hide';
@@ -42,7 +42,6 @@ function handleResize() {
     window.removeEventListener('DOMContentLoaded', handleResize);
   }
 }
-
 window.addEventListener('resize', handleResize);
 document.addEventListener('DOMContentLoaded', handleResize);
 
