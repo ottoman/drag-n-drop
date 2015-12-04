@@ -1,10 +1,13 @@
 
-require "./player-image.css"
-react =               require "./react-facade.coffee"
-SVGComp =             require "./SvgComp.coffee"
-PlayerPaths =         require "./playerPaths.coffee"
+react = require "./react-facade.coffee"
+SVGComp = require "./SvgComp.coffee"
+PlayerPaths = require "./paths.coffee"
 
 PlayerImage = react.createClass
+
+  # Always return false here since the SVG elements
+  # never change.
+  shouldComponentUpdate: (newProps) -> false
 
   # renderPart()
   # part: "nose"
@@ -42,7 +45,7 @@ PlayerImage = react.createClass
     }
 
     return o "div",
-      className: "player-image"
+      className: "player-icon"
       style:
         width: "100%"
         height: "100%"
@@ -55,7 +58,7 @@ PlayerImage = react.createClass
         viewBoxHeight: "160"
         # Background consists of bg.png but is cropped in position depending on
         # the x and y bg position of each player image.
-        background: "#818285 url('/src/player-image/img/bg.png') #{bg.x} #{bg.y} / 300% 120% no-repeat"
+        # background: "#818285 url('/src/images/bg_sky.png') #{bg.x} #{bg.y} / 300% 120% no-repeat"
       ,
         o "g", {
 

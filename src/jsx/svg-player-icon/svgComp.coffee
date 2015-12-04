@@ -23,7 +23,7 @@ SvgComp = react.createClass
       style:
         width: width
         height: height
-        background: @props.background || ""
+        background: @props.background || "none"
       viewBox: "#{viewBoxX} #{viewBoxY} #{viewBoxWidth} #{viewBoxHeight}"
       xmlns: "http://www.w3.org/2000/svg"
       # preserveAspectRatio: "XMidYMid meet"
