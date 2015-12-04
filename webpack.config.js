@@ -2,6 +2,7 @@
 // start with:
 // webpack-dev-server --progress --colors -d
 //
+var path = require('path');
 
 module.exports = {
   entry: {
@@ -9,10 +10,13 @@ module.exports = {
   },
   output: {
     // Make sure to use [name] or [id] in output.filename
-    //  when using multiple entry points
-    path: './dist/',
+    // when using multiple entry points
+
+    path: path.resolve(__dirname, 'dist'),
     filename: '[name].bundle.js',
-    chunkFilename: '[id].bundle.js'
+    chunkFilename: '[id].bundle.js',
+    // publicPath: 'src',
+    // publicPath: '/dist/'
   },
   module: {
     loaders: [
@@ -29,7 +33,7 @@ module.exports = {
       // css
       {
         test: /\.css$/,
-        loader: 'style!css'
+        loader: 'style!css!autoprefixer-loader'
       },
       // coffee
       {
@@ -48,6 +52,10 @@ module.exports = {
           optional: ['runtime'],
           stage: 1
         }
+      },
+      // static files
+      {
+        test: /\.html?$|\.jpe?g$|\.gif$|\.png$/, loader: 'file'
       }
     ]
   },

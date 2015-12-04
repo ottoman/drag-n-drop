@@ -5,10 +5,9 @@ node_modules
 *~
 *.pyc
 static
-.grunt
-_SpecRunner.html
 __benchmarks__
 build/
+dist/
 .module-cache
 *.gem
 docs/.bundle
