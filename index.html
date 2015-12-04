@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.2, user-scalable=no">
+        <title>Manage Team</title>
+        <meta name="description" content="">
+        <style>
+            html, body, #container {
+              height: 100%;
+              min-height: 100%;
+              margin: 0;
+              padding: 0;
+              background: #272727;
+            }
+            body {
+              font-family: sans-serif;
+              color: #fff;
+            }
+        </style>
+    </head>
+    <body>
+        <style>
+            #loader {
+              top: 50%;
+              margin: auto;
+              height: 8px;
+              width: 40%;
+              position: relative;
+              overflow: hidden;
+              background-color: rgba(255, 255, 255, 0.3);
+            }
+            #loader.hide {
+                display: none;
+            }
+            #loader:before{
+              display: block;
+              position: absolute;
+              content: "";
+              left: -50%;
+              width: 50%;
+              height: 100%;
+              background-color: #fff;
+              
+              -webkit-animation: loading 2s linear infinite;
+                -moz-animation: loading 2s linear infinite;
+                  -o-animation: loading 2s linear infinite;;
+                    animation: loading 2s linear infinite;
+            }
+
+            @-webkit-keyframes loading { from {left: -50%; width: 30%;} to {left: 100%;} }
+               @-moz-keyframes loading { from {left: -50%; width: 30%;} to {left: 100%;} }
+                 @-o-keyframes loading { from {left: -50%; width: 30%;} to {left: 100%;} }
+                    @keyframes loading { from {left: -50%; width: 30%;} to {left: 100%;} }
+
+        </style>
+        <div id="loader"></div>
+        <div id="container"></div>
+        <script src="app.bundle.js"></script>
+    </body>
+</html>
