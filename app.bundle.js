@@ -60,7 +60,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	__webpack_require__(217);
+	__webpack_require__(218);
 
 	// Device dimensinos
 	// ipad (1st and 2nd gen) & ipad mini:      1024 x 768        1.33
@@ -68,24 +68,24 @@
 	// iphone 4, 4s                             960 x 640         1.5
 	// iphone 5                                 1136 x 640        1.775
 
-	var getSettings = function getSettings() {
-	  var windowSize = {
+	var getWindow = function getWindow() {
+	  return {
 	    width: window.innerWidth || document.body.clientWidth,
 	    height: window.innerHeight || document.body.clientHeight
-	  };
-	  windowSize.isLandscape = windowSize.width > windowSize.height;
-	  return {
-	    window: windowSize
 	  };
 	};
 
 	var renderApp = function renderApp() {
-	  _react2.default.render(_react2.default.createElement(_App2.default, { settings: getSettings() }), document.getElementById('container'));
+	  _react2.default.render(_react2.default.createElement(_App2.default, {}), document.getElementById('container'));
 	};
 
 	function handleResize() {
-	  var settings = getSettings();
-	  if (settings.window.width && settings.window.height) {
+	  var _getWindow = getWindow();
+
+	  var width = _getWindow.width;
+	  var height = _getWindow.height;
+
+	  if (width && height) {
 	    // Once we have width and height we can render
 	    renderApp();
 	    // Hide the spinner
@@ -98,9 +98,6 @@
 	}
 	window.addEventListener('resize', handleResize);
 	document.addEventListener('DOMContentLoaded', handleResize);
-
-	// Re-render when mobile device is rotated
-	window.onorientationchange = renderApp;
 
 /***/ },
 /* 1 */
@@ -20602,6 +20599,8 @@
 
 	'use strict';
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 	Object.defineProperty(exports, "__esModule", {
@@ -20624,9 +20623,9 @@
 
 	var _formationCoordinates2 = _interopRequireDefault(_formationCoordinates);
 
-	var _TeamEditor = __webpack_require__(185);
+	var _Editor = __webpack_require__(185);
 
-	var _TeamEditor2 = _interopRequireDefault(_TeamEditor);
+	var _Editor2 = _interopRequireDefault(_Editor);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -20635,24 +20634,6 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	// a Team is a list of players positioned in a specific formation
-	var Team = function Team(players, coordinates, formation, uniform) {
-	  return {
-	    // 4-4-2, 5-3-2 etc
-	    formation: formation,
-	    // x,y coordinates of each position including the subs and reserves.
-	    coordinates: coordinates,
-	    // PlayerPositions holds all available positions in this formation and which
-	    // player is currently assigned to which position.
-	    playerPositions: _.range(0, 29, 1).map(function (c, i) {
-	      return players[i];
-	    }),
-	    // animation requires a hash so convert array into object map here...
-	    playerMap: _.indexBy(players, 'id'),
-	    uniform: uniform
-	  };
-	};
 
 	var App = (function (_React$Component) {
 	  _inherits(App, _React$Component);
@@ -20667,11 +20648,20 @@
 	    var players = _.range(16).map(function (i) {
 	      return _player2.default.createRandom(i + 1);
 	    });
-	    // create a couple of preset teams
-	    var teams = [new Team(_.shuffle(players), _formationCoordinates2.default['4 4 2'], '4 4 2', _uniform2.default.createRandom()), new Team(_.shuffle(players), _formationCoordinates2.default['5 3 2'], '5 3 2', _uniform2.default.createRandom())];
 	    _this.state = {
-	      teams: teams,
-	      selectedTeam: teams[0]
+	      // 4-4-2, 5-3-2 etc
+	      formation: '4 4 2',
+	      // x,y coordinates of each position
+	      coordinates: _formationCoordinates2.default['4 4 2'],
+	      // PlayerPositions holds all available positions in this formation and which
+	      // player is currently assigned to which position.
+	      playerPositions: _.range(0, 29, 1).map(function (c, i) {
+	        return players[i];
+	      }),
+	      // animation requires a hash so convert array into object map here...
+	      playerMap: _.indexBy(players, 'id'),
+	      // a random jersey and shorts
+	      uniform: _uniform2.default.createRandom()
 	    };
 	    return _this;
 	  }
@@ -20684,62 +20674,43 @@
 	  }, {
 	    key: 'handleFormationChanged',
 	    value: function handleFormationChanged(formation) {
-	      var selectedTeam = this.state.selectedTeam;
-
-	      selectedTeam.formation = formation;
-	      selectedTeam.coordinates = _formationCoordinates2.default[formation];
 	      this.setState({
-	        selectedTeam: selectedTeam
+	        formation: formation,
+	        coordinates: _formationCoordinates2.default[formation]
 	      });
 	    }
 	  }, {
 	    key: 'handlePositionsChanged',
 	    value: function handlePositionsChanged(newPositions) {
-	      var selectedTeam = this.state.selectedTeam;
-
-	      selectedTeam.playerPositions = newPositions;
 	      this.setState({
-	        selectedTeam: selectedTeam
+	        playerPositions: newPositions
 	      });
 	    }
 	  }, {
 	    key: 'handleNewUniform',
 	    value: function handleNewUniform() {
-	      var selectedTeam = this.state.selectedTeam;
-
-	      selectedTeam.uniform = _uniform2.default.createRandom();
 	      this.setState({
-	        selectedTeam: selectedTeam
+	        uniform: _uniform2.default.createRandom()
 	      });
 	    }
 	  }, {
 	    key: 'handleClearPositions',
 	    value: function handleClearPositions() {
-	      var selectedTeam = this.state.selectedTeam;
-
-	      selectedTeam.playerPositions = _.sortBy(selectedTeam.playerPositions, function (a, b) {
-	        return a !== undefined;
-	      });
 	      this.setState({
-	        selectedTeam: selectedTeam
+	        playerPositions: _.sortBy(this.state.playerPositions, function (a, b) {
+	          return a !== undefined;
+	        })
 	      });
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _props$settings = this.props.settings;
-	      var field = _props$settings.field;
-	      var iconSize = _props$settings.iconSize;
-	      var selectedTeam = this.state.selectedTeam;
-
-	      return _react2.default.createElement(_TeamEditor2.default, {
-	        team: selectedTeam,
-	        settings: this.props.settings,
+	      return _react2.default.createElement(_Editor2.default, _extends({}, this.state, {
 	        onFormationChanged: this.handleFormationChanged.bind(this),
 	        onPositionsChanged: this.handlePositionsChanged.bind(this),
 	        onNewUniform: this.handleNewUniform.bind(this),
 	        onClearPositions: this.handleClearPositions.bind(this)
-	      });
+	      }));
 	    }
 	  }]);
 
@@ -35388,8 +35359,6 @@
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
@@ -35422,6 +35391,10 @@
 
 	var _FormationMarker2 = _interopRequireDefault(_FormationMarker);
 
+	var _RenderLandscapePortrait = __webpack_require__(217);
+
+	var _RenderLandscapePortrait2 = _interopRequireDefault(_RenderLandscapePortrait);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -35430,39 +35403,18 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	function renderLandscapeAndPortrait(component) {
-	  return (function (_component) {
-	    _inherits(_class, _component);
+	var Editor = (function (_React$Component) {
+	  _inherits(Editor, _React$Component);
 
-	    function _class() {
-	      _classCallCheck(this, _class);
+	  function Editor(props) {
+	    _classCallCheck(this, Editor);
 
-	      return _possibleConstructorReturn(this, Object.getPrototypeOf(_class).apply(this, arguments));
-	    }
-
-	    _createClass(_class, [{
-	      key: 'render',
-	      value: function render() {
-	        return _get(Object.getPrototypeOf(_class.prototype), 'renderLandscape', this).call(this);
-	      }
-	    }]);
-
-	    return _class;
-	  })(component);
-	}
-
-	var TeamEditor = (function (_React$Component) {
-	  _inherits(TeamEditor, _React$Component);
-
-	  function TeamEditor(props) {
-	    _classCallCheck(this, TeamEditor);
-
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(TeamEditor).call(this, props));
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Editor).call(this, props));
 	  }
 
-	  _createClass(TeamEditor, [{
-	    key: 'getActualCoordinates',
-	    value: function getActualCoordinates(field, coordinates) {
+	  _createClass(Editor, [{
+	    key: 'getFormationCoordinates',
+	    value: function getFormationCoordinates(field, coordinates) {
 	      var x = field.height - field.width;
 	      var paddedWidth = field.width - field.padding * 2;
 	      var paddedHeight = field.height - field.padding * 2;
@@ -35472,8 +35424,8 @@
 	      // 13 reserve positions even further right
 	      .concat(_formationCoordinates2.default.col(-0.5, _lodash2.default.range(1, 0, -0.08))).map(function (p) {
 	        return {
-	          x: p.x * paddedWidth + field.padding + x,
-	          y: p.y * paddedHeight + field.padding
+	          x: p.x * paddedWidth + x + field.padding + field.margin,
+	          y: p.y * paddedHeight + field.padding + field.margin
 	        };
 	      });
 	      return result;
@@ -35500,21 +35452,98 @@
 	      this.props.onClearPositions();
 	    }
 	  }, {
-	    key: 'renderLandscape',
-	    value: function renderLandscape() {
-	      var team = this.props.team;
-
+	    key: 'getField',
+	    value: function getField(height) {
 	      var field = {};
-	      field.height = this.props.settings.window.height; // 700px
-	      field.width = field.height / 1.4; // 500px
-	      field.padding = field.height * 0.071; // 49.5px
-	      var iconSize = field.height * 0.128;
+	      field.margin = 20;
+	      var adjustedHeight = height - field.margin * 2;
+	      field.width = adjustedHeight / 1.4;
+	      field.height = adjustedHeight;
+	      field.iconSize = field.height * 0.128;
+	      field.padding = field.height * 0.071;
+	      return field;
+	    }
+	  }, {
+	    key: 'renderFormationEditor',
+	    value: function renderFormationEditor(field) {
+	      var _props = this.props;
+	      var coordinates = _props.coordinates;
+	      var playerPositions = _props.playerPositions;
+	      var playerMap = _props.playerMap;
+	      // create array with x, y position of each formation position
 
-	      var formationMarkers = this.getActualCoordinates(field, team.coordinates).map(function (p, i) {
-	        var size = i > 15 ? iconSize * 0.5 : iconSize;
+	      var formationMarkers = this.getFormationCoordinates(field, coordinates).map(function (p, i) {
+	        var size = i > 15 ? field.iconSize * 0.5 : field.iconSize;
 	        return _react2.default.createElement(_FormationMarker2.default, { key: i, size: size, x: p.x, y: p.y });
 	      });
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement('div', { className: 'field', style: {
+	            position: 'absolute',
+	            top: field.margin,
+	            left: field.margin + field.height - field.width,
+	            width: field.width,
+	            height: field.height
+	          } }),
+	        formationMarkers,
+	        _react2.default.createElement(_AnimatePlayerIcons2.default, { iconSize: field.iconSize,
+	          onChange: this.handlePositionsChanged.bind(this),
+	          coordinates: this.getFormationCoordinates(field, coordinates),
+	          playerPositions: playerPositions,
+	          playerMap: playerMap
+	        })
+	      );
+	    }
+	  }, {
+	    key: 'renderFormationButtons',
+	    value: function renderFormationButtons(isLandscape) {
+	      var formation = this.props.formation;
 
+	      return _react2.default.createElement(
+	        'div',
+	        { style: {
+	            width: isLandscape ? '100%' : '50%',
+	            height: isLandscape ? '50%' : '100%',
+	            overflow: 'auto',
+	            display: 'flex',
+	            justifyContent: 'center',
+	            flexDirection: 'column',
+	            alignItems: 'center'
+	          } },
+	        _react2.default.createElement(_FormationButtons2.default, {
+	          onClickFormation: this.handleClickFormation.bind(this),
+	          selectedFormation: formation
+	        })
+	      );
+	    }
+	  }, {
+	    key: 'renderUniform',
+	    value: function renderUniform(isLandscape) {
+	      var uniform = this.props.uniform;
+
+	      return _react2.default.createElement(
+	        'div',
+	        { style: {
+	            width: isLandscape ? '100%' : '50%',
+	            height: isLandscape ? '50%' : '100%',
+	            display: 'flex',
+	            justifyContent: 'center',
+	            flexDirection: isLandscape ? 'column' : 'row',
+	            alignItems: 'center'
+	          } },
+	        _react2.default.createElement(_main2.default, { uniform: uniform }),
+	        _react2.default.createElement(
+	          'button',
+	          { className: 'glass', style: { margin: 20 }, onClick: this.handleClickNewUniform.bind(this) },
+	          'Random'
+	        )
+	      );
+	    }
+	  }, {
+	    key: 'renderLandscape',
+	    value: function renderLandscape(width, height) {
+	      var field = this.getField(height);
 	      return _react2.default.createElement(
 	        'div',
 	        { style: {
@@ -35527,105 +35556,63 @@
 	          'div',
 	          { style: {
 	              position: 'relative',
-	              width: this.props.settings.window.height,
-	              height: '100%'
+	              width: height,
+	              height: height
 	            } },
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'editor' },
-	            _react2.default.createElement('div', { className: 'field', style: {
-	                position: 'absolute',
-	                left: field.height - field.width,
-	                width: field.width,
-	                height: field.height
-	              } }),
-	            formationMarkers,
-	            _react2.default.createElement(_AnimatePlayerIcons2.default, { iconSize: iconSize,
-	              onChange: this.handlePositionsChanged.bind(this),
-	              coordinates: this.getActualCoordinates(field, team.coordinates),
-	              playerPositions: team.playerPositions,
-	              playerMap: team.playerMap
-	            }),
-	            _react2.default.createElement(
-	              'button',
-	              {
-	                className: 'glass glass-red',
-	                style: {
-	                  position: 'absolute',
-	                  width: iconSize,
-	                  height: 60,
-	                  left: '13%',
-	                  top: '90%'
-	                },
-	                onClick: this.handleClickClear.bind(this)
-	              },
-	              'Clear'
-	            )
-	          )
+	          this.renderFormationEditor(field)
 	        ),
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'tile', style: {
+	          { style: {
 	              position: 'relative',
-	              minWidth: this.props.settings.window.height * 0.33,
+	              minWidth: height * 0.33,
 	              height: '100%'
 	            } },
-	          _react2.default.createElement(
-	            'div',
-	            { style: {
-	                padding: 20,
-	                height: '50%',
-	                display: 'flex',
-	                justifyContent: 'center',
-	                flexDirection: 'column',
-	                alignItems: 'center'
-
-	              } },
-	            _react2.default.createElement(_FormationButtons2.default, {
-	              onClickFormation: this.handleClickFormation.bind(this),
-	              selectedFormation: this.props.team.formation
-	            })
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { style: {
-	                padding: 20,
-	                height: '50%',
-	                display: 'flex',
-	                justifyContent: 'center',
-	                flexDirection: 'column',
-	                alignItems: 'center'
-	              } },
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'uniform', style: { height: '80%', flexGrow: 1 } },
-	              _react2.default.createElement(_main2.default, { uniform: team.uniform })
-	            ),
-	            _react2.default.createElement(
-	              'button',
-	              { className: 'glass', onClick: this.handleClickNewUniform.bind(this) },
-	              'Random'
-	            )
-	          )
+	          this.renderFormationButtons(true),
+	          this.renderUniform(true)
 	        )
 	      );
 	    }
 	  }, {
 	    key: 'renderPortrait',
-	    value: function renderPortrait() {
+	    value: function renderPortrait(width, height) {
+	      var field = this.getField(width);
 	      return _react2.default.createElement(
 	        'div',
-	        null,
-	        'portrait'
+	        { style: {
+	            height: '100%',
+	            display: 'flex',
+	            flexWrap: 'wrap',
+	            justifyContent: 'center'
+	          } },
+	        _react2.default.createElement(
+	          'div',
+	          { style: {
+	              position: 'relative',
+	              width: width,
+	              height: width
+	            } },
+	          this.renderFormationEditor(field)
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { style: {
+	              display: 'flex',
+	              width: '100%',
+	              height: height - width
+	            } },
+	          this.renderFormationButtons(false),
+	          this.renderUniform(false)
+	        )
 	      );
 	    }
 	  }]);
 
-	  return TeamEditor;
+	  return Editor;
 	})(_react2.default.Component);
 
-	TeamEditor = renderLandscapeAndPortrait(TeamEditor);
-	exports.default = TeamEditor;
+	Editor = (0, _RenderLandscapePortrait2.default)(Editor);
+	exports.default = Editor;
 
 /***/ },
 /* 186 */
@@ -35694,7 +35681,7 @@
 	    var oldPosition = this.state.playerPositions.indexOf(player);
 	    if (newPosition !== null && newPosition !== oldPosition) {
 	      // swap items in array
-	      var arrData = this.state.playerPositions.slice();
+	      var arrData = this.props.playerPositions.slice();
 	      if (this.state.playerPositions.indexOf(player) === arrData.indexOf(player)) {
 	        var tmp = arrData[oldPosition];
 	        arrData[oldPosition] = arrData[newPosition];
@@ -37924,7 +37911,7 @@
 	  render: function() {
 	    var height, o, viewBoxHeight, viewBoxWidth, viewBoxX, viewBoxY, width;
 	    o = react.em;
-	    width = this.props.width || "100%";
+	    width = this.props.width || "auto";
 	    height = this.props.height || "100%";
 	    viewBoxX = this.props.viewBoxX || "0";
 	    viewBoxY = this.props.viewBoxY || "0";
@@ -37932,6 +37919,7 @@
 	    viewBoxHeight = this.props.viewBoxHeight || "100";
 	    return o("svg", {
 	      style: {
+	        position: "relative",
 	        width: width,
 	        height: height,
 	        background: this.props.background || "none"
@@ -38108,7 +38096,10 @@
 	    o = react.em;
 	    return o(SVGComp, {
 	      viewBoxWidth: "220",
-	      viewBoxHeight: "350"
+	      viewBoxHeight: "350",
+	      style: {
+	        display: "relative"
+	      }
 	    }, paths.shorts.base(this.props.uniform.shorts.color), ((ref = this.props.uniform.shorts.patterns) != null ? ref.primary : void 0) != null ? paths.shorts.pattern(this.props.uniform.shorts.patterns.primary.name, this.props.uniform.shorts.patterns.primary.color) : void 0, ((ref1 = this.props.uniform.shorts.patterns) != null ? ref1.secondary : void 0) != null ? paths.shorts.pattern(this.props.uniform.shorts.patterns.secondary.name, this.props.uniform.shorts.patterns.secondary.color) : void 0, paths.shorts.shadows("#000", "0.2"), paths.shorts.strokes("#000", "0.4"), paths.shirt.base(this.props.uniform.shirt.color), ((ref2 = this.props.uniform.shirt.patterns) != null ? ref2.primary : void 0) != null ? paths.shirt.pattern(this.props.uniform.shirt.patterns.primary.name, this.props.uniform.shirt.patterns.primary.color) : void 0, ((ref3 = this.props.uniform.shirt.patterns) != null ? ref3.secondary : void 0) != null ? paths.shirt.pattern(this.props.uniform.shirt.patterns.secondary.name, this.props.uniform.shirt.patterns.secondary.color) : void 0, ((ref4 = this.props.uniform.logo.patterns) != null ? ref4.length : void 0) ? paths.logo.patterns(this.props.uniform.logo.color, "2", "0.8", this.props.uniform.logo.patterns, this.props.uniform.logo.scale, this.props.uniform.logo.atCenter, this.props.uniform.logo.bg) : void 0, this.props.uniform.brand.pattern != null ? paths.brand.base(this.props.uniform.brand.color, "0.7", this.props.uniform.brand.pattern) : void 0, paths.shirt.shadows("#000", "0.2"), paths.shirt.strokes("#000", "0.4"), paths.uniform.outline("#222", "1", "none"));
 	  }
 	});
@@ -38317,13 +38308,102 @@
 /* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var getDimensions = function getDimensions() {
+	  return {
+	    width: window.innerWidth || document.body.clientWidth,
+	    height: window.innerHeight || document.body.clientHeight
+	  };
+	};
+
+	function RenderLandscapePortrait(component) {
+	  return (function (_component) {
+	    _inherits(_class, _component);
+
+	    function _class(props) {
+	      _classCallCheck(this, _class);
+
+	      var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, props));
+
+	      _this.handleOrientationChange = _this.handleOrientationChange.bind(_this);
+	      var dimensions = getDimensions();
+	      _this.state = { isLandscape: dimensions.width > dimensions.height };
+	      return _this;
+	    }
+
+	    _createClass(_class, [{
+	      key: 'componentDidMount',
+	      value: function componentDidMount() {
+	        window.addEventListener('orientationchange', this.handleOrientationChange);
+	      }
+	    }, {
+	      key: 'componentWillUnmount',
+	      value: function componentWillUnmount() {
+	        window.removeEventListener('orientationchange', this.handleOrientationChange);
+	      }
+	    }, {
+	      key: 'handleOrientationChange',
+	      value: function handleOrientationChange() {
+	        var dimensions = getDimensions();
+	        var isLandscape = dimensions.width > dimensions.height;
+	        if (this.state.isLandscape !== isLandscape) {
+	          this.setState({ isLandscape: isLandscape });
+	        }
+	      }
+	    }, {
+	      key: 'render',
+	      value: function render() {
+	        var _getDimensions = getDimensions();
+
+	        var width = _getDimensions.width;
+	        var height = _getDimensions.height;
+
+	        if (this.state.isLandscape) {
+	          return _get(Object.getPrototypeOf(_class.prototype), 'renderLandscape', this).call(this, width, height);
+	        } else {
+	          return _get(Object.getPrototypeOf(_class.prototype), 'renderPortrait', this).call(this, width, height);
+	        }
+	      }
+	    }]);
+
+	    return _class;
+	  })(component);
+	}
+
+	exports.default = RenderLandscapePortrait;
+
+/***/ },
+/* 218 */
+/***/ function(module, exports, __webpack_require__) {
+
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(218);
+	var content = __webpack_require__(219);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(221)(content, {});
+	var update = __webpack_require__(223)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -38340,21 +38420,21 @@
 	}
 
 /***/ },
-/* 218 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(219)();
+	exports = module.exports = __webpack_require__(220)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "\r\n* {\r\n  padding: 0;\r\n  margin: 0;\r\n  -webkit-user-select: none;\r\n  box-sizing: border-box;\r\n}\r\n\r\nhtml, body {\r\n  overflow: hidden;\r\n  -webkit-tap-highlight-color: transparent;\r\n}\r\n\r\nh1 {\r\n  margin: 0;\r\n  padding-left: 1em;\r\n  font-weight: normal;\r\n  font-size: 30px;\r\n  line-height: 60px;\r\n  color: #eee;\r\n  text-shadow: 2px 8px 6px rgba(0,0,0,0.6),\r\n               0px 0px 35px rgba(255,255,255,0.3);\r\n}\r\n\r\nlabel {\r\n  color: rgba(255, 255, 255, 0.8);\r\n  text-transform: uppercase;\r\n  text-shadow: 2px 2px 0px rgba(0,0,0,0.9),\r\n               0px 0px 35px rgba(255,255,255,0.3);\r\n}\r\n\r\n/* uniform svg is 220 x 350 i.e. 62.86% */\r\n.uniform {\r\n  /*background-image: url(../images/shirt-blur.png);\r\n  background-size: auto 100%;\r\n  background-position: 50%;\r\n  background-repeat: no-repeat;*/\r\n}\r\n\r\n.field {\r\n  box-shadow: 2px 2px 6px rgba(0,0,0,0.4),\r\n              0px 0px 176px 15px rgba(255, 255, 255, 0.2);\r\n  background-image: url(" + __webpack_require__(220) + ");\r\n  -webkit-transform: translateZ(0);\r\n          transform: translateZ(0);\r\n  background-size: 100% 100%;\r\n  background-repeat: no-repeat;\r\n  border-radius: 4px;\r\n  opacity: 0.9;\r\n}\r\n\r\n.formation-marker {\r\n  position: absolute;\r\n  background: rgba(0, 0, 0, 0.15);\r\n  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3) inset,\r\n              -2px -2px 2px rgba(255, 255, 255, 0.13) inset;\r\n  overflow: hidden;\r\n  border-radius: 50%;\r\n}\r\n\r\n.animated-list {\r\n  -webkit-transform-style: preserve-3d;\r\n          transform-style: preserve-3d;\r\n  position: relative;\r\n}\r\n\r\n.animated-item {\r\n  background: rgba(255,255,255,0.4);\r\n  border-bottom: 2px solid rgba(0, 0, 0, 0.6);\r\n  border-right: 2px solid rgba(0, 0, 0, 0.6);\r\n  overflow: hidden;\r\n  border-radius: 50%;\r\n  cursor: move;\r\n  position: absolute;\r\n  -webkit-transform-origin: 50% 50% 0px;\r\n      -ms-transform-origin: 50% 50% 0px;\r\n          transform-origin: 50% 50% 0px; /* needed for scale transform */\r\n}\r\n\r\nbutton {\r\n  position: relative; /* needed for top,left position change in :active; */\r\n  border: none;\r\n  color: rgba(255, 255, 255, 0.8);\r\n  text-shadow: 1px 1px #000;\r\n  font-size: 16px;\r\n  text-decoration:none;\r\n  padding: 0.5em 1.5em;\r\n  cursor: pointer;\r\n  width: 178px;\r\n  height: 60px;\r\n  overflow: visible;\r\n  border-radius: 3px;\r\n  outline: 0;  \r\n  background: transparent;\r\n}\r\n\r\n/* a btn-group removes border radious for all children except first and last */\r\n.btn-group > button {\r\n  border-radius: 0;\r\n}\r\n.btn-group > button:first-child {\r\n  border-top-left-radius: 4px;\r\n  border-top-right-radius: 4px;\r\n}\r\n.btn-group > button:last-child {\r\n  border-bottom-left-radius: 4px;\r\n  border-bottom-right-radius: 4px;\r\n}\r\n\r\n/* glass efftect. http://codepen.io/raad/pen/EzFAv?editors=010 */\r\n.glass {\r\n  border: 1px solid rgba(0, 0, 0, 0.6);\r\n  background-image: -webkit-linear-gradient(top, \r\n    rgba(96,103,104,0.3) 0%,\r\n    rgba(187,187,187,0.3) 3%,\r\n    rgba(187,187,187,0.3) 27%,\r\n    rgba(0,0,0,0.3) 28%,\r\n    rgba(0,0,0,0.3) 60%,\r\n    rgba(0,0,0,0.3) 73%,\r\n    rgba(75,80,81,0.3) 88%,\r\n    rgba(0,0,0,0.3) 97%,\r\n    rgba(0,0,0,0.3) 100%\r\n  );\r\n  background-image: linear-gradient(to bottom, \r\n    rgba(96,103,104,0.3) 0%,\r\n    rgba(187,187,187,0.3) 3%,\r\n    rgba(187,187,187,0.3) 27%,\r\n    rgba(0,0,0,0.3) 28%,\r\n    rgba(0,0,0,0.3) 60%,\r\n    rgba(0,0,0,0.3) 73%,\r\n    rgba(75,80,81,0.3) 88%,\r\n    rgba(0,0,0,0.3) 97%,\r\n    rgba(0,0,0,0.3) 100%\r\n  );\r\n  box-shadow:\r\n    0 1px 0 0 rgba(255, 255, 255, 0.4) inset,\r\n    0 2px 6px rgba(0, 0, 0, 0.5),\r\n    0 10px rgba(0, 0, 0, 0.05) inset;\r\n}\r\n\r\n/* a normal glass button will light up when clicked */\r\n.glass:active {\r\n  top: 1px;\r\n  left: 1px;\r\n  color: rgba(0, 0, 0, 1.0);\r\n  text-shadow: 0px 0px 15px rgba(255, 255, 255, 0.7),\r\n    0px 0px 15px rgba(255, 255, 255, 0.7);\r\n  background-image: -webkit-linear-gradient(top, \r\n    rgba(255, 255, 255, 1.0) 0%,\r\n    rgba(255, 255, 255, 0.7) 3%,\r\n    rgba(255, 255, 255, 0.7) 27%,\r\n    rgba(255, 255, 255, 0.6) 28%,\r\n    rgba(255,255,255,0.2) 60%,\r\n    rgba(255,255,255,0.2) 73%,\r\n    rgba(255,255,255,0.05) 88%,\r\n    rgba(255,255,255,0.2) 97%,\r\n    rgba(255,255,255,0.2) 100%\r\n  );\r\n  background-image: linear-gradient(to bottom, \r\n    rgba(255, 255, 255, 1.0) 0%,\r\n    rgba(255, 255, 255, 0.7) 3%,\r\n    rgba(255, 255, 255, 0.7) 27%,\r\n    rgba(255, 255, 255, 0.6) 28%,\r\n    rgba(255,255,255,0.2) 60%,\r\n    rgba(255,255,255,0.2) 73%,\r\n    rgba(255,255,255,0.05) 88%,\r\n    rgba(255,255,255,0.2) 97%,\r\n    rgba(255,255,255,0.2) 100%\r\n  );\r\n  box-shadow:\r\n    0px 0px 16px 2px rgba(255, 255, 255, 0.4),\r\n    0px 0px 35px 4px rgba(255, 255, 255, 0.6) inset;\r\n}\r\n\r\n.glass[disabled] {\r\n  cursor: inherit;\r\n}\r\n\r\n/* glass-toggleable, will go dark in hover and active states */\r\n.glass-toggleable--is-toggled, .glass-toggleable--is-toggled:hover, .glass-toggleable:active {\r\n  background: -webkit-linear-gradient(top,  rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.5) 100%);\r\n  background: linear-gradient(to bottom,  rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.5) 100%);\r\n  color: rgba(255, 255, 255, 0.7);\r\n  text-shadow: 1px 1px #000;\r\n  box-shadow:  2px 2px 3px rgba(0, 0, 0, 0.5) inset;\r\n}\r\n\r\n.glass-red {\r\n  background-color: rgba(255, 120, 120, 0.65); \r\n}\r\n.glass-red:active {\r\n  box-shadow:\r\n    0px 0px 16px 2px rgba(255, 120, 120, 0.4),\r\n    0px 0px 35px 4px rgba(255, 120, 120, 0.6) inset;\r\n}\r\n\r\n/* animation */\r\n.fadein-appear {\r\n  opacity: 0.01;\r\n}\r\n.fadein-appear-active {\r\n  opacity: 1;\r\n  -webkit-transition-duration: .5s;\r\n          transition-duration: .5s;\r\n  -webkit-transition-timing-function: linear;\r\n          transition-timing-function: linear;\r\n  -webkit-transition-property: opacity;\r\n  transition-property: opacity;\r\n}\r\n", ""]);
+	exports.push([module.id, "\r\n* {\r\n  padding: 0;\r\n  margin: 0;\r\n  -webkit-user-select: none;\r\n  box-sizing: border-box;\r\n}\r\n\r\nhtml, body {\r\n  overflow: hidden;\r\n  -webkit-tap-highlight-color: transparent;\r\n}\r\n\r\nbody {\r\n  background-image: url(" + __webpack_require__(221) + ");\r\n  background-size: 100% 100%;\r\n  background-repeat: no-repeat;\r\n}\r\n\r\nh1 {\r\n  margin: 0;\r\n  padding-left: 1em;\r\n  font-weight: normal;\r\n  font-size: 30px;\r\n  line-height: 60px;\r\n  color: #eee;\r\n  text-shadow: 2px 8px 6px rgba(0,0,0,0.6),\r\n               0px 0px 35px rgba(255,255,255,0.3);\r\n}\r\n\r\nlabel {\r\n  color: rgba(255, 255, 255, 0.8);\r\n  text-transform: uppercase;\r\n  text-shadow: 2px 2px 0px rgba(0,0,0,0.9),\r\n               0px 0px 35px rgba(255,255,255,0.3);\r\n}\r\n\r\n/* uniform svg is 220 x 350 i.e. 62.86% */\r\n.uniform {\r\n  /*background-image: url(../images/shirt-blur.png);\r\n  background-size: auto 100%;\r\n  background-position: 50%;\r\n  background-repeat: no-repeat;*/\r\n}\r\n\r\n.field {\r\n  box-shadow: 2px 2px 6px rgba(0,0,0,0.4),\r\n              0px 0px 176px 15px rgba(255, 255, 255, 0.2);\r\n  background-image: url(" + __webpack_require__(222) + ");\r\n  -webkit-transform: translateZ(0);\r\n          transform: translateZ(0);\r\n  background-size: 100% 100%;\r\n  background-repeat: no-repeat;\r\n  border-radius: 4px;\r\n}\r\n\r\n.formation-marker {\r\n  position: absolute;\r\n  background: rgba(0, 0, 0, 0.15);\r\n  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3) inset,\r\n              -2px -2px 2px rgba(255, 255, 255, 0.13) inset;\r\n  overflow: hidden;\r\n  border-radius: 50%;\r\n}\r\n\r\n.animated-list {\r\n  -webkit-transform-style: preserve-3d;\r\n          transform-style: preserve-3d;\r\n  position: relative;\r\n}\r\n\r\n.animated-item {\r\n  background: rgba(255,255,255,0.4);\r\n  border-bottom: 2px solid rgba(0, 0, 0, 0.6);\r\n  border-right: 2px solid rgba(0, 0, 0, 0.6);\r\n  overflow: hidden;\r\n  border-radius: 50%;\r\n  cursor: move;\r\n  position: absolute;\r\n  -webkit-transform-origin: 50% 50% 0px;\r\n      -ms-transform-origin: 50% 50% 0px;\r\n          transform-origin: 50% 50% 0px; /* needed for scale transform */\r\n}\r\n\r\nbutton {\r\n  position: relative; /* needed for top,left position change in :active; */\r\n  border: none;\r\n  color: rgba(255, 255, 255, 0.8);\r\n  text-shadow: 1px 1px #000;\r\n  font-size: 16px;\r\n  text-decoration:none;\r\n  padding: 0.5em 1.5em;\r\n  cursor: pointer;\r\n  width: 178px;\r\n  height: 60px;\r\n  overflow: visible;\r\n  border-radius: 3px;\r\n  outline: 0;  \r\n  background: transparent;\r\n}\r\n\r\n/* a btn-group removes border radious for all children except first and last */\r\n.btn-group > button {\r\n  border-radius: 0;\r\n}\r\n.btn-group > button:first-child {\r\n  border-top-left-radius: 4px;\r\n  border-top-right-radius: 4px;\r\n}\r\n.btn-group > button:last-child {\r\n  border-bottom-left-radius: 4px;\r\n  border-bottom-right-radius: 4px;\r\n}\r\n\r\n/* glass efftect. http://codepen.io/raad/pen/EzFAv?editors=010 */\r\n.glass {\r\n  border: 1px solid rgba(0, 0, 0, 0.6);\r\n  background-image: -webkit-linear-gradient(top, \r\n    rgba(96,103,104,0.3) 0%,\r\n    rgba(187,187,187,0.3) 3%,\r\n    rgba(187,187,187,0.3) 27%,\r\n    rgba(0,0,0,0.3) 28%,\r\n    rgba(0,0,0,0.3) 60%,\r\n    rgba(0,0,0,0.3) 73%,\r\n    rgba(75,80,81,0.3) 88%,\r\n    rgba(0,0,0,0.3) 97%,\r\n    rgba(0,0,0,0.3) 100%\r\n  );\r\n  background-image: linear-gradient(to bottom, \r\n    rgba(96,103,104,0.3) 0%,\r\n    rgba(187,187,187,0.3) 3%,\r\n    rgba(187,187,187,0.3) 27%,\r\n    rgba(0,0,0,0.3) 28%,\r\n    rgba(0,0,0,0.3) 60%,\r\n    rgba(0,0,0,0.3) 73%,\r\n    rgba(75,80,81,0.3) 88%,\r\n    rgba(0,0,0,0.3) 97%,\r\n    rgba(0,0,0,0.3) 100%\r\n  );\r\n  box-shadow:\r\n    0 1px 0 0 rgba(255, 255, 255, 0.4) inset,\r\n    0 2px 6px rgba(0, 0, 0, 0.5),\r\n    0 10px rgba(0, 0, 0, 0.05) inset;\r\n}\r\n\r\n/* a normal glass button will light up when clicked */\r\n.glass:active {\r\n  top: 1px;\r\n  left: 1px;\r\n  color: rgba(0, 0, 0, 1.0);\r\n  text-shadow: 0px 0px 15px rgba(255, 255, 255, 0.7),\r\n    0px 0px 15px rgba(255, 255, 255, 0.7);\r\n  background-image: -webkit-linear-gradient(top, \r\n    rgba(255, 255, 255, 1.0) 0%,\r\n    rgba(255, 255, 255, 0.7) 3%,\r\n    rgba(255, 255, 255, 0.7) 27%,\r\n    rgba(255, 255, 255, 0.6) 28%,\r\n    rgba(255,255,255,0.2) 60%,\r\n    rgba(255,255,255,0.2) 73%,\r\n    rgba(255,255,255,0.05) 88%,\r\n    rgba(255,255,255,0.2) 97%,\r\n    rgba(255,255,255,0.2) 100%\r\n  );\r\n  background-image: linear-gradient(to bottom, \r\n    rgba(255, 255, 255, 1.0) 0%,\r\n    rgba(255, 255, 255, 0.7) 3%,\r\n    rgba(255, 255, 255, 0.7) 27%,\r\n    rgba(255, 255, 255, 0.6) 28%,\r\n    rgba(255,255,255,0.2) 60%,\r\n    rgba(255,255,255,0.2) 73%,\r\n    rgba(255,255,255,0.05) 88%,\r\n    rgba(255,255,255,0.2) 97%,\r\n    rgba(255,255,255,0.2) 100%\r\n  );\r\n  box-shadow:\r\n    0px 0px 16px 2px rgba(255, 255, 255, 0.4),\r\n    0px 0px 35px 4px rgba(255, 255, 255, 0.6) inset;\r\n}\r\n\r\n.glass[disabled] {\r\n  cursor: inherit;\r\n}\r\n\r\n/* glass-toggleable, will go dark in hover and active states */\r\n.glass-toggleable--is-toggled, .glass-toggleable--is-toggled:hover, .glass-toggleable:active {\r\n  background: -webkit-linear-gradient(top,  rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.5) 100%);\r\n  background: linear-gradient(to bottom,  rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.5) 100%);\r\n  color: rgba(255, 255, 255, 0.7);\r\n  text-shadow: 1px 1px #000;\r\n  box-shadow:  2px 2px 3px rgba(0, 0, 0, 0.5) inset;\r\n}\r\n\r\n.glass-red {\r\n  background-color: rgba(255, 120, 120, 0.65); \r\n}\r\n.glass-red:active {\r\n  box-shadow:\r\n    0px 0px 16px 2px rgba(255, 120, 120, 0.4),\r\n    0px 0px 35px 4px rgba(255, 120, 120, 0.6) inset;\r\n}\r\n\r\n/* animation */\r\n.fadein-appear {\r\n  opacity: 0.01;\r\n}\r\n.fadein-appear-active {\r\n  opacity: 1;\r\n  -webkit-transition-duration: .5s;\r\n          transition-duration: .5s;\r\n  -webkit-transition-timing-function: linear;\r\n          transition-timing-function: linear;\r\n  -webkit-transition-property: opacity;\r\n  transition-property: opacity;\r\n}\r\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 219 */
+/* 220 */
 /***/ function(module, exports) {
 
 	/*
@@ -38410,13 +38490,19 @@
 
 
 /***/ },
-/* 220 */
+/* 221 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "16dcf717b2e9e6dd85c304b4deac0691.png";
+
+/***/ },
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "31ffa61c50cfcd84e749de35f91b403f.png";
 
 /***/ },
-/* 221 */
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
