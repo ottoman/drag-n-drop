@@ -50,7 +50,7 @@ let AnimatePlayerIcons = React.createClass({
     const oldPosition = this.state.playerPositions.indexOf(player);
     if (newPosition !== null && newPosition !== oldPosition) {
       // swap items in array
-      let arrData = this.state.playerPositions.slice();
+      let arrData = this.props.playerPositions.slice();
       if (this.state.playerPositions.indexOf(player) === arrData.indexOf(player)) {
         let tmp = arrData[oldPosition];
         arrData[oldPosition] = arrData[newPosition];
