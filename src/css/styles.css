@@ -11,6 +11,12 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+body {
+  background-image: url(../images/sunburst.png);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
 h1 {
   margin: 0;
   padding-left: 1em;
@@ -45,7 +51,6 @@ label {
   background-size: 100% 100%;
   background-repeat: no-repeat;
   border-radius: 4px;
-  opacity: 0.9;
 }
 
 .formation-marker {

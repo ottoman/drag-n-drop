@@ -26,7 +26,6 @@ class App extends React.Component {
       // a random jersey and shorts
       uniform: Uniform.createRandom()
     };
-
   }
   
   componentWillReceiveProps() {

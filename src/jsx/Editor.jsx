@@ -67,7 +67,7 @@ class Editor extends React.Component {
     let formationMarkers = this.getFormationCoordinates(field, coordinates).map((p, i) => {
       let size = i > 15? field.iconSize * 0.5 : field.iconSize;
       return <FormationMarker key={i} size={size} x={p.x} y={p.y}  />  
-    }) 
+    });
     return (
       <div>
         <div className="field" style={{
@@ -109,7 +109,6 @@ class Editor extends React.Component {
     let {formation} = this.props;
     return (
       <div style={{
-        float: 'left',
         width: isLandscape? '100%' : '50%',
         height: isLandscape? '50%' : '100%',
         overflow: 'auto',
