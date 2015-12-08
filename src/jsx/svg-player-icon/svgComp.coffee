@@ -13,7 +13,7 @@ SvgComp = react.createClass
 
   render: () ->
     o = react.em
-    width = @props.width || "100%"
+    width = @props.width || "auto"
     height = @props.height || "100%"
     viewBoxX = @props.viewBoxX || "0"
     viewBoxY = @props.viewBoxY || "0"
@@ -21,6 +21,7 @@ SvgComp = react.createClass
     viewBoxHeight = @props.viewBoxHeight || "100"
     o "svg", 
       style:
+        position: "relative"
         width: width
         height: height
         background: @props.background || "none"

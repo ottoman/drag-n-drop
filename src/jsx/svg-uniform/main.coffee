@@ -13,6 +13,7 @@ Uniform = react.createClass
     o SVGComp,
       viewBoxWidth: "220"
       viewBoxHeight: "350"
+      style: {display: "relative"}
     ,
       # Shorts
       paths.shorts.base(@props.uniform.shorts.color)

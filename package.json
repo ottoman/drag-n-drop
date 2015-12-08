@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/main.js",
   "scripts": {
-    "start": "webpack-dev-server --content-base src --colors --progress -d",
+    "start": "webpack-dev-server --host 0.0.0.0 --port 8585 --content-base src --colors --progress -d",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "./node_modules/.bin/eslint src"
   },
